@@ -2,13 +2,13 @@
 THUHITSZ_Coop Team for MICCAI MMAC 2023 - Myopic Maculopathy Analysis Challenge (近视性黄斑病变分析挑战)
 
 
-Validation Phase - Task 1 | Test Phase - Task 1 | Competition Ends
-------------------------- | --------------------| ----------------
-June 1, 2023, 8 a.m. UTC | July 15, 2023, 8 a.m. UTC | Aug. 15, 2023, 11:59 p.m. UTC
-
 [数据集下载](https://pan.baidu.com/s/1hi7ETmqYcJAd7w1oSZEyWA?pwd=lxss#list/path=%2F)
 
 ## Task 1 分类任务
+
+Validation Phase - Task 1 | Test Phase - Task 1 | Competition Ends
+------------------------- | --------------------| ----------------
+June 1, 2023, 8 a.m. UTC | July 15, 2023, 8 a.m. UTC | Aug. 15, 2023, 11:59 p.m. UTC
 
 1. 将数据根据label划分到每个类别的文件夹，并上传至服务器中
 2. 先用几个常见的效果很好的分类网络，跑一下结果，看看(CNN:ResNet50, ConvNext-tiny; Transformer:ViT-small, SwinTransformer-Tiny) --- 利用[Timm包](https://github.com/huggingface/pytorch-image-models)
