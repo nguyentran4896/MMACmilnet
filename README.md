@@ -1,7 +1,7 @@
-# THUHITSZ_Coop-MMAC
+# [MICCAI 2023 MMAC] Classification of Myopic Maculopathy Images with Self-supervised Driven Multiple Instance Learning Network
 THUHITSZ_Coop Team for MICCAI MMAC 2023 - Myopic Maculopathy Analysis Challenge
 
-
+Paper Link: https://link.springer.com/chapter/10.1007/978-3-031-54857-4_9
 
 ##### Data Augmentation
 
