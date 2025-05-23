@@ -59,7 +59,7 @@ class model:
 
         self.feat_extractor = vits.__dict__['vit_small'](patch_size=16)
 
-        state_dict = torch.load(os.path.join(dir_path, self.dino), map_location=self.device)
+        state_dict = torch.load(os.path.join(dir_path, self.dino), map_location=self.device, weights_only=True)
 
         state_dict = state_dict['teacher']
 
@@ -73,7 +73,7 @@ class model:
 
         checkpoint_path = os.path.join(dir_path, self.checkpoint)
 
-        ckpt = torch.load(checkpoint_path, map_location=self.device)
+        ckpt = torch.load(checkpoint_path, map_location=self.device, weights_only=True)
         new_ckpt = {}
         for name, param in ckpt.items():
             new_name = name.replace('_orig_mod.module.', '')

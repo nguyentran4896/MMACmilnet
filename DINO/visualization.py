@@ -4,12 +4,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 from scipy.ndimage import zoom
-from tqdm import tqdm
 
 
 def main():
-    root_path = "/data_sdb/THUHITCoop/validationset/MICCAI-MMAC23 Validation Set/1. Classification of Myopic Maculopathy/category/"
-
+    # Parameters
     img_size = 800
     patch_size = 200
     stride = 100
@@ -17,31 +15,58 @@ def main():
     num_patches = (img_size - patch_size) // stride + 1
     zoom_scale = img_size / num_patches
     
-    network =  model.model()
+    # Load model
+    network = model.model()
     network.load(".")
     
-    for label in range(5):
-        label_path = os.path.join(root_path, str(label))
-        paths = [os.path.join(label_path, file_name) for file_name in os.listdir(label_path)]
-        save_path = f"./results/{label}"
-        os.makedirs(save_path, exist_ok=True)     
+    # Get the exact image from the path
+    image_path = "P0083.jpg"
+    if not os.path.exists(image_path):
+        print(f"Image not found at {image_path}")
+        return
+    
+    # Process image
+    input_image = cv2.imread(image_path)
+    input_image = cv2.resize(input_image, (800, 800))  # Ensure consistent size
+    img = cv2.cvtColor(input_image, cv2.COLOR_BGR2RGB)
+    classification, attention = network.predict(input_image)
 
-        for path in tqdm(paths):
-            file_name =  os.path.join(save_path, os.path.basename(path))
+    print(f"Input image shape: {img.shape}")
+    print(f"Raw attention shape: {attention.shape}, attention size: {attention.size}")
+    
+    # Class names for myopic maculopathy grades
+    class_names = {
+        0: "No myopic maculopathy (Grade 0)",
+        1: "Mild myopic maculopathy (Grade 1)",
+        2: "Moderate myopic maculopathy (Grade 2)",
+        3: "Severe myopic maculopathy (Grade 3)",
+        4: "Very severe myopic maculopathy (Grade 4)"
+    }
+    
+    print(f"Classification result: Grade {classification} - {class_names[classification]}")
+    
+    # Reshape attention map to match the actual size
+    attention = attention.reshape(-1)  # Flatten the attention map
+    attention_size = int(len(attention) ** 0.5)  # Calculate square root
+    if attention_size * attention_size != len(attention):
+        # If not a perfect square, find the closest dimensions
+        attention_size = int(np.ceil(np.sqrt(len(attention))))
+        # Pad the attention map to make it square
+        padded_size = attention_size * attention_size
+        attention = np.pad(attention, (0, padded_size - len(attention)))
+    
+    attention = attention.reshape(attention_size, attention_size)
+    attention = zoom(attention, zoom=(img_size/attention_size, img_size/attention_size))
 
-            if os.path.exists(file_name):
-                continue
-
-            input_image = cv2.imread(path)
-            img = cv2.cvtColor(input_image, cv2.COLOR_BGR2RGB)
-            _, attention = network.predict(input_image)
-            attention = attention.reshape(num_patches, num_patches)
-            attention = zoom(attention, zoom=(zoom_scale, zoom_scale))
-
-            plt.cla()
-            plt.imshow(img)
-            plt.imshow(attention, cmap='jet', alpha=0.3)
-            plt.savefig(file_name)
+    # Plot and save
+    plt.figure(figsize=(10, 10))
+    plt.imshow(img)
+    plt.imshow(attention, cmap='jet', alpha=0.3)
+    plt.axis('off')
+    plt.savefig("attention_visualization.png", bbox_inches='tight', pad_inches=0)
+    plt.close()
+    
+    print(f"Visualization saved as 'attention_visualization.png' in the root folder")
 
 
 if __name__ == '__main__':
